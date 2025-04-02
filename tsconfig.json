@@ -38,6 +38,6 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts"
-  ],
+, "vitest.config.ts"  ],
   "exclude": ["node_modules"]
 }
