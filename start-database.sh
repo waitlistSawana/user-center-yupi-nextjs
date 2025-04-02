@@ -11,14 +11,21 @@
 
 # On Linux and macOS you can run this script directly - `./start-database.sh`
 
+# 设置自动导出所有变量
 set -a
+# 从.env文件加载环境变量
 source .env
 
+# 从DATABASE_URL中解析数据库密码
 DB_PASSWORD=$(echo "$DATABASE_URL" | awk -F':' '{print $3}' | awk -F'@' '{print $1}')
+# 从DATABASE_URL中解析数据库端口
 DB_PORT=$(echo "$DATABASE_URL" | awk -F':' '{print $4}' | awk -F'\/' '{print $1}')
+# 从DATABASE_URL中解析数据库名称
 DB_NAME=$(echo "$DATABASE_URL" | awk -F'/' '{print $4}')
+# 设置数据库容器名称
 DB_CONTAINER_NAME="$DB_NAME-postgres"
 
+# 检查是否安装了Docker或Podman
 if ! [ -x "$(command -v docker)" ] && ! [ -x "$(command -v podman)" ]; then
   echo -e "Docker or Podman is not installed. Please install docker or podman and try again.\nDocker install guide: https://docs.docker.com/engine/install/\nPodman install guide: https://podman.io/getting-started/installation"
   exit 1
@@ -31,11 +38,13 @@ elif [ -x "$(command -v podman)" ]; then
   DOCKER_CMD="podman"
 fi
 
+# 检查Docker/Podman守护进程是否运行
 if ! $DOCKER_CMD info > /dev/null 2>&1; then
   echo "$DOCKER_CMD daemon is not running. Please start $DOCKER_CMD and try again."
   exit 1
 fi
 
+# 检查端口是否被占用
 if command -v nc >/dev/null 2>&1; then
   if nc -z localhost "$DB_PORT" 2>/dev/null; then
     echo "Port $DB_PORT is already in use."
@@ -50,17 +59,20 @@ else
   fi
 fi
 
+# 检查数据库容器是否已在运行
 if [ "$($DOCKER_CMD ps -q -f name=$DB_CONTAINER_NAME)" ]; then
   echo "Database container '$DB_CONTAINER_NAME' already running"
   exit 0
 fi
 
+# 检查是否存在已停止的数据库容器，如果有则启动它
 if [ "$($DOCKER_CMD ps -q -a -f name=$DB_CONTAINER_NAME)" ]; then
   $DOCKER_CMD start "$DB_CONTAINER_NAME"
   echo "Existing database container '$DB_CONTAINER_NAME' started"
   exit 0
 fi
 
+# 检查是否使用默认密码，如果是则提供随机密码生成选项
 if [ "$DB_PASSWORD" == "password" ]; then
   echo "You are using the default database password"
   read -p "Should we generate a random password for you? [y/N]: " -r REPLY
@@ -73,6 +85,7 @@ if [ "$DB_PASSWORD" == "password" ]; then
   sed -i '' "s#:password@#:$DB_PASSWORD@#" .env
 fi
 
+# 创建并运行新的数据库容器
 $DOCKER_CMD run -d \
   --name $DB_CONTAINER_NAME \
   -e MYSQL_ROOT_PASSWORD="$DB_PASSWORD" \
