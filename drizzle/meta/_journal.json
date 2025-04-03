@@ -15,6 +15,13 @@
       "when": 1743605326428,
       "tag": "0001_giant_black_bird",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1743682044108,
+      "tag": "0002_sticky_colossus",
+      "breakpoints": true
     }
   ]
 }

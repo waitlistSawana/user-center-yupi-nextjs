@@ -1,0 +1,1 @@
+ALTER TABLE `user-center-yupi-nextjs_user` MODIFY COLUMN `userAccount` varchar(256) NOT NULL;

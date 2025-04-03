@@ -33,7 +33,7 @@ export const users = createTable(
   (d) => ({
     id: d.bigint({ mode: "number" }).primaryKey().autoincrement(), // 用户ID，主键，自增
     username: d.varchar({ length: 256 }), // 用户昵称
-    userAccount: d.varchar({ length: 256 }), // 用户账号
+    userAccount: d.varchar({ length: 256 }).notNull(), // 用户账号
     avatarUrl: d.varchar({ length: 1024 }), // 用户头像地址
     gender: d.tinyint(), // 性别（0-女，1-男）
     userPassword: d.varchar({ length: 512 }).notNull(), // 用户密码，不能为空

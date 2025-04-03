@@ -1,7 +1,6 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
 import { GET, POST } from "@/app/api/demo/route";
 import { NextRequest } from "next/server";
-import { TRPCError } from "@trpc/server";
 
 describe("Demo API 路由测试", () => {
   // 在每个测试前重置用户数组

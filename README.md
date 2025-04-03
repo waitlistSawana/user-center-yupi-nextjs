@@ -1,29 +1,33 @@
-# Create T3 App
+# 用户中心项目 - 鱼皮
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+## 技术栈
 
-## What's next? How do I make an app with this?
+### 前端
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- Nextjs 15 App Router
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- ShadcnUi 组件库
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- Tailwindcss 4.x
 
-## Learn More
+### 后端
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- Nextjs 15 App Router
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+- Drizzle ORM + Mysql 数据库
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+- tRPC 服务端框架
 
-## How do I deploy this?
+- Server 文件夹：后端服务端代码，api 路由，repositories 数据库访问，services 业务逻辑，utils 服务端专用工具函数，db 数据库连接、设置和工具，api tRPC 路由
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### 测试
+
+- Vitest：测试文件位于 src/test 目录下
+
+### 其他第三方依赖
+
+- bcrypt：密码加密
+
+- zod：数据校验和类型定义
+
+- lucide-react：开源图标库
