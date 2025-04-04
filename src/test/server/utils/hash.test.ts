@@ -1,5 +1,8 @@
+// pnpm vitest run src/test/server/utils/hash.test.ts
+
+
 import { describe, it, expect } from "vitest";
-import { hashPassword, verifyPassword } from "@/server/utils/utils";
+import { hashPassword, verifyPassword } from "@/server/utils/hash";
 
 describe("密码工具函数", () => {
   describe("hashPassword", () => {

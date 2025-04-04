@@ -6,6 +6,7 @@ import { loadEnv } from "vite";
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
   test: {
+    environment: "node",
     environmentMatchGlobs: [
       ["./src/test/app/**", "jsdom"],
       ["./src/test/server/**", "node"],
