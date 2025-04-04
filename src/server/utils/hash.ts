@@ -1,9 +1,10 @@
 /**
- * 仅服务端使用 工具函数
+ * 仅服务端使用 密码工具函数
  *
  * @author Sawana Huang
  */
 
+import "server-only";
 import bcrypt from "bcrypt";
 
 /**

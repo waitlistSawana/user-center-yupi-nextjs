@@ -4,8 +4,11 @@
  * @author Sawana Huang
  */
 
+import "server-only";
+import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { users } from "../db/schema";
+import { verifyPassword } from "../utils/hash";
 
 /**
  * 判断用户是否存在
@@ -34,7 +37,7 @@ export async function isUserExist(userAccount: string): Promise<boolean> {
 
 /**
  * 创建用户名和密码
- * 
+ *
  * @description 根据用户名和明文密码创建用户
  *
  * @param userAccount
@@ -55,4 +58,68 @@ export async function insertUser(
 
   const userId = insertedUser[0]?.id;
   return userId ?? -1;
+}
+
+/**
+ * 判断用户登录，根据用户名和密码
+ *
+ * @param userAccount 用户名
+ * @param plainPassword 明文密码
+ *
+ * @returns  code: -1 表示未知错误，0 表示成功，1 表示用户不存在，2 表示密码错误
+ *           user: 用户信息 { id: number, userAccount: string }
+ */
+export async function getLoginUser(
+  userAccount: string,
+  plainPassword: string,
+): Promise<{
+  code: -1 | 0 | 1 | 2;
+  user: { id: number; userAccount: string } | null;
+  message?: string | undefined | null;
+}> {
+  // 1. 查找当前用户是否在数据库 返回 userId 、 userAccount 和 userPassword
+  const user = await db.query.users.findFirst({
+    where: eq(users.userAccount, userAccount),
+    columns: {
+      id: true,
+      userAccount: true,
+      userPassword: true,
+    },
+  });
+  if (!user)
+    return {
+      code: 1,
+      message: "user login failed, userAccount not found.",
+      user: null,
+    };
+
+  // 2. 比较密码是否通过
+  const isPasswordMatch = await verifyPassword(
+    plainPassword,
+    user.userPassword,
+  );
+  if (!isPasswordMatch)
+    return {
+      code: 2,
+      message: "user login failed, userPassword not match.",
+      user: null,
+    };
+
+  // 成功获取用户
+  if (user)
+    return {
+      code: 0,
+      message: "user login success.",
+      user: {
+        id: user.id,
+        userAccount: user.userAccount,
+      },
+    };
+
+  // 默认返回错误
+  return {
+    code: -1,
+    message: "user login failed, unknown error, default return.",
+    user: null,
+  };
 }

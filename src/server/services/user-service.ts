@@ -4,8 +4,9 @@
  * @author Sawana Huang
  */
 
-import { insertUser, isUserExist } from "../repositories/user";
-import { hashPassword } from "../utils";
+import { getLoginUser, insertUser, isUserExist } from "../repositories/user";
+import { hashPassword } from "../utils/hash";
+import { createSession } from "../utils/session";
 
 /**
  * 用户注册功能
@@ -51,4 +52,55 @@ export async function userRegister({
 
   // 通过校验
   return insertedUserId;
+}
+
+/**
+ * 用户登录功能
+ *
+ * @description 实现用户登录功能，验证用户账号密码，以及生成登录凭证。
+ *
+ * @param userAccount 用户账号
+ * @param userPassword 用户密码
+ *
+ * @returns
+ */
+export async function userLogin({
+  userAccount,
+  userPassword,
+}: {
+  userAccount: string;
+  userPassword: string;
+}): Promise<{
+  id: number;
+  userAccount: string;
+} | null> {
+  // 1。 校验
+  if (!userAccount || !userPassword) return null;
+  if (userAccount.length < 6) return null;
+  if (userPassword.length < 8) return null;
+  // 校验账户不能包含特殊字符
+  const matchResult = userAccount.match(/^[a-zA-Z][a-zA-Z0-9_]{4,15}$/);
+  if (!matchResult) return null;
+
+  // 2. 获取登录用户信息
+  const matchedUserResponse = await getLoginUser(userAccount, userPassword);
+  if (matchedUserResponse?.code !== 0) return null;
+  if (!matchedUserResponse?.user) return null;
+  const user = matchedUserResponse.user;
+
+  // 3. 记录用户登录态
+  /**
+   * 如何知道哪个用户登录了？
+   * 1. 连接服务断后，得到一个 session 状态，返回给前端
+   * 2. 登录成功后，得到成功登录的 session，并给 session 设置一些值，返回给前端一个设置coookie的命令
+   * 3. 前端收到命令后，设置 cookie ，保存到浏览器内
+   * 4. 前端再次请求后端时（相同域名），在请求头中带上 cookie 去请求
+   * 5. 后端拿到前端传来的 cookie ，找到对应的 sesion
+   * 6. 后端从 seesion 中可以取出基于该 session 存储的变量 （用户的登录信息、登录名）
+   */
+  await createSession(user.id.toString());
+
+
+  // 通过校验
+  return user;
 }

@@ -31,3 +31,5 @@
 - zod：数据校验和类型定义
 
 - lucide-react：开源图标库
+
+- Jose: JWT 库，session 管理，兼容 Edge Runtime
