@@ -47,7 +47,7 @@ export async function isUserExist(userAccount: string): Promise<boolean> {
 export async function insertUser(
   userAccount: string,
   hashedPassword: string,
-): Promise<number | -1> {
+): Promise<number> {
   const insertedUser = await db
     .insert(users)
     .values({

@@ -16,12 +16,18 @@ vi.mock("next/headers", async () => {
     delete: vi.fn(),
   };
   return {
-    cookies: () => mockStore
+    cookies: () => mockStore,
   };
 });
 
 // 导入被测试的模块
-import { encrypt, decrypt, createSession, updateSession, deleteSession } from "@/server/utils/session";
+import {
+  encrypt,
+  decrypt,
+  createSession,
+  updateSession,
+  deleteSession,
+} from "@/server/utils/session";
 
 describe("Session 会话工具函数", () => {
   beforeEach(() => {
@@ -97,7 +103,11 @@ describe("Session 会话工具函数", () => {
       };
       const token = await new SignJWT(payload)
         .setProtectedHeader({ alg: "HS256" })
-        .sign(new TextEncoder().encode(process.env.SESSION_SECRET_KEY || "test-key"));
+        .sign(
+          new TextEncoder().encode(
+            process.env.SESSION_SECRET_KEY ?? "test-key",
+          ),
+        );
       const result = await decrypt(token);
       expect(result).toBeUndefined();
     });
@@ -110,19 +120,32 @@ describe("Session 会话工具函数", () => {
 
       const cookieStore = await cookies();
       expect(cookieStore.set).toHaveBeenCalledTimes(1);
-      const mockCall = (cookieStore.set as ReturnType<typeof vi.fn>).mock.calls[0];
+      const mockCall = (cookieStore.set as ReturnType<typeof vi.fn>).mock
+        .calls[0] as [
+        name: string,
+        value: string,
+        options: {
+          httpOnly: boolean;
+          secure: boolean;
+          expires: Date;
+          sameSite: "lax" | "strict" | "none";
+          path: string;
+        },
+      ];
       const name = mockCall?.[0];
       const value = mockCall?.[1];
       const options = mockCall?.[2];
-      
+
       expect(name).toBe("user-center-sawana-session");
       expect(typeof value).toBe("string");
-      expect(options).toEqual(expect.objectContaining({
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-        path: "/",
-      }));
+      expect(options).toEqual(
+        expect.objectContaining({
+          httpOnly: true,
+          secure: true,
+          sameSite: "lax",
+          path: "/",
+        }),
+      );
 
       const decoded = await decrypt(value);
       expect(decoded?.sub).toBe(subject);
@@ -133,13 +156,26 @@ describe("Session 会话工具函数", () => {
     it("应该成功更新有效会话", async () => {
       const oldToken = await encrypt({ sub: "user123" });
       const cookieStore = await cookies();
-(cookieStore.get as ReturnType<typeof vi.fn>).mockReturnValue({ value: oldToken });
+      (cookieStore.get as ReturnType<typeof vi.fn>).mockReturnValue({
+        value: oldToken,
+      });
 
       const result = await updateSession();
       expect(result).toBe(true);
       expect(cookieStore.set).toHaveBeenCalledTimes(1);
 
-      const mockCall = (cookieStore.set as ReturnType<typeof vi.fn>).mock.calls[0];
+      const mockCall = (cookieStore.set as ReturnType<typeof vi.fn>).mock
+        .calls[0] as [
+        name: string,
+        value: string,
+        options: {
+          httpOnly: boolean;
+          secure: boolean;
+          expires: Date;
+          sameSite: "lax" | "strict" | "none";
+          path: string;
+        },
+      ];
       const name = mockCall?.[0];
       const newToken = mockCall?.[1];
       const decoded = await decrypt(newToken);
@@ -148,14 +184,16 @@ describe("Session 会话工具函数", () => {
 
     it("无效会话应该返回false", async () => {
       const cookieStore = await cookies();
-(cookieStore.get as ReturnType<typeof vi.fn>).mockReturnValue({ value: "invalid.token" });
+      (cookieStore.get as ReturnType<typeof vi.fn>).mockReturnValue({
+        value: "invalid.token",
+      });
       const result = await updateSession();
       expect(result).toBe(false);
     });
 
     it("没有会话应该返回false", async () => {
       const cookieStore = await cookies();
-(cookieStore.get as ReturnType<typeof vi.fn>).mockReturnValue(undefined);
+      (cookieStore.get as ReturnType<typeof vi.fn>).mockReturnValue(undefined);
       const result = await updateSession();
       expect(result).toBe(false);
     });
@@ -166,7 +204,9 @@ describe("Session 会话工具函数", () => {
       await deleteSession();
       const cookieStore = await cookies();
       expect(cookieStore.delete).toHaveBeenCalledTimes(1);
-      expect(cookieStore.delete).toHaveBeenCalledWith("user-center-sawana-session");
+      expect(cookieStore.delete).toHaveBeenCalledWith(
+        "user-center-sawana-session",
+      );
     });
   });
-})
+});

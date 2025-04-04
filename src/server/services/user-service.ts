@@ -35,7 +35,7 @@ export async function userRegister({
   if (userAccount.length < 6) return -1;
   if (userPassword.length < 8 || checkPassword.length < 8) return -1;
   // 校验账户不能包含特殊字符
-  const matchResult = userAccount.match(/^[a-zA-Z][a-zA-Z0-9_]{4,15}$/);
+  const matchResult = /^[a-zA-Z][a-zA-Z0-9_]{4,15}$/.exec(userAccount);
   if (!matchResult) return -1;
   // 密码和校验密码是否一致（类型判断，长度，格式）
   if (userPassword.localeCompare(checkPassword) !== 0) return -1;
@@ -79,7 +79,7 @@ export async function userLogin({
   if (userAccount.length < 6) return null;
   if (userPassword.length < 8) return null;
   // 校验账户不能包含特殊字符
-  const matchResult = userAccount.match(/^[a-zA-Z][a-zA-Z0-9_]{4,15}$/);
+  const matchResult = /^[a-zA-Z][a-zA-Z0-9_]{4,15}$/.exec(userAccount);
   if (!matchResult) return null;
 
   // 2. 获取登录用户信息

@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 // 定义请求体的验证模式
@@ -9,7 +9,14 @@ const postSchema = z.object({
 });
 
 // 模拟的数据存储
-let users: any[] = [];
+const users = [
+  {
+    name: "user1",
+  },
+  {
+    name: "user2",
+  },
+];
 
 // GET 请求处理
 export async function GET() {
@@ -20,17 +27,20 @@ export async function GET() {
       message: "获取成功",
     });
   } catch (error) {
-    return NextResponse.json({
-      code: 500,
-      message: "服务器内部错误",
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        code: 500,
+        message: "服务器内部错误",
+      },
+      { status: 500 },
+    );
   }
 }
 
 // POST 请求处理
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as object;
 
     // 验证请求体
     const validationResult = postSchema.safeParse(body);
@@ -55,9 +65,12 @@ export async function POST(request: NextRequest) {
       message: "创建成功",
     });
   } catch (error) {
-    return NextResponse.json({
-      code: 500,
-      message: "服务器内部错误",
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        code: 500,
+        message: "服务器内部错误",
+      },
+      { status: 500 },
+    );
   }
 }

@@ -2,6 +2,20 @@ import { describe, expect, it, beforeEach, vi } from "vitest";
 import { GET, POST } from "@/app/api/demo/route";
 import { NextRequest } from "next/server";
 
+interface ApiResponse {
+  code: number;
+  message: string;
+  data?: {
+    name: string;
+    age: number;
+  };
+  errors?: Array<{
+    message: string;
+    path: string[];
+    code: string;
+  }>;
+}
+
 describe("Demo API 路由测试", () => {
   // 在每个测试前重置用户数组
   beforeEach(() => {
@@ -12,7 +26,7 @@ describe("Demo API 路由测试", () => {
   describe("GET /api/demo", () => {
     it("应该返回空用户列表", async () => {
       const response = await GET();
-      const data = await response.json();
+      const data = (await response.json()) as ApiResponse;
 
       expect(data).toEqual({
         code: 0,
@@ -33,7 +47,7 @@ describe("Demo API 路由测试", () => {
       });
 
       const response = await POST(mockRequest);
-      const data = await response.json();
+      const data = (await response.json()) as ApiResponse;
 
       expect(data).toEqual({
         code: 0,
@@ -55,11 +69,11 @@ describe("Demo API 路由测试", () => {
       });
 
       const response = await POST(mockRequest);
-      const data = await response.json();
+      const data = (await response.json()) as ApiResponse;
 
       expect(data.code).toBe(400);
       expect(data.message).toBe("参数验证失败");
-      expect(data.errors[0].message).toBe("名称不能为空");
+      expect(data.errors?.[0]?.message).toBe("名称不能为空");
     });
 
     it("应该验证请求体参数 - 年龄超出范围", async () => {
@@ -72,11 +86,11 @@ describe("Demo API 路由测试", () => {
       });
 
       const response = await POST(mockRequest);
-      const data = await response.json();
+      const data = (await response.json()) as ApiResponse;
 
       expect(data.code).toBe(400);
       expect(data.message).toBe("参数验证失败");
-      expect(data.errors[0].message).toBe("年龄不能超过150岁");
+      expect(data.errors?.[0]?.message).toBe("年龄不能超过150岁");
     });
 
     it("应该处理无效的JSON请求体", async () => {
@@ -86,7 +100,7 @@ describe("Demo API 路由测试", () => {
       });
 
       const response = await POST(mockRequest);
-      const data = await response.json();
+      const data = (await response.json()) as ApiResponse;
 
       expect(data.code).toBe(500);
       expect(data.message).toBe("服务器内部错误");
