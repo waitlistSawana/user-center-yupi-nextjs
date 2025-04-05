@@ -1,6 +1,6 @@
-import { describe, expect, it, beforeEach, vi } from "vitest";
 import { GET, POST } from "@/app/api/demo/route";
 import { NextRequest } from "next/server";
+import { beforeEach, describe, expect, it } from "vitest";
 
 interface ApiResponse {
   code: number;

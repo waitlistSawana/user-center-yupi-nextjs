@@ -9,6 +9,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { users } from "../db/schema";
 import { verifyPassword } from "../utils/hash";
+import type { SafeUser } from "../db/types";
 
 /**
  * 判断用户是否存在
@@ -74,8 +75,8 @@ export async function getLoginUser(
   plainPassword: string,
 ): Promise<{
   code: -1 | 0 | 1 | 2;
-  user: { id: number; userAccount: string } | null;
-  message?: string | undefined | null;
+  user: SafeUser | null;
+  message: string;
 }> {
   // 1. 查找当前用户是否在数据库 返回 userId 、 userAccount 和 userPassword
   const user = await db.query.users.findFirst({
@@ -84,6 +85,15 @@ export async function getLoginUser(
       id: true,
       userAccount: true,
       userPassword: true,
+      username: true,
+      avatarUrl: true,
+      gender: true,
+      userRole: true,
+      userStatus: true,
+      isDelete: true,
+      planetCode: true,
+      createTime: true,
+      updateTime: true,
     },
   });
   if (!user)
@@ -113,6 +123,15 @@ export async function getLoginUser(
       user: {
         id: user.id,
         userAccount: user.userAccount,
+        username: user.username,
+        avatarUrl: user.avatarUrl,
+        gender: user.gender,
+        userRole: user.userRole,
+        userStatus: user.userStatus,
+        isDelete: user.isDelete,
+        planetCode: user.planetCode,
+        createTime: user.createTime,
+        updateTime: user.updateTime,
       },
     };
 

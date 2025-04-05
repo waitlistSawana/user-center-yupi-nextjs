@@ -1,0 +1,55 @@
+@url = http://localhost:3000
+@randomNumber = {{$randomInt 10 99}}
+
+### Test Get endpoint
+GET  {{url}}/api/v1/user/register
+
+### 成功注册新用户
+POST {{url}}/api/v1/user/register
+Content-Type: application/json
+
+{
+    "userAccount": "testuser{{randomNumber}}",
+    "userPassword": "password123",
+    "checkPassword": "password123"
+}
+
+### 注册失败 - 账号长度不足
+POST {{url}}/api/v1/user/register
+Content-Type: application/json
+
+{
+    "userAccount": "test",
+    "userPassword": "password123",
+    "checkPassword": "password123"
+}
+
+### 注册失败 - 密码不匹配
+POST {{url}}/api/v1/user/register
+Content-Type: application/json
+
+{
+    "userAccount": "testuser",
+    "userPassword": "password123",
+    "checkPassword": "password456"
+}
+
+### 注册失败 - 账号包含特殊字符
+POST {{url}}/api/v1/user/register
+Content-Type: application/json
+
+{
+    "userAccount": "test@user",
+    "userPassword": "password123",
+    "checkPassword": "password123"
+}
+
+### 注册失败 - 密码长度不足
+POST {{url}}/api/v1/user/register
+Content-Type: application/json
+
+{
+    "userAccount": "testuser",
+    "userPassword": "pass",
+    "checkPassword": "pass"
+}

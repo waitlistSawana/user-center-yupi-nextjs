@@ -1,0 +1,73 @@
+@url = http://localhost:3000
+@userAccount1 = testuser64
+@userAccount2 = testuser56
+
+### 成功登录
+POST {{url}}/api/v1/user/login
+Content-Type: application/json
+
+{
+    "userAccount": "{{userAccount1}}",
+    "userPassword": "password123"
+}
+
+### 登录失败 - 缺少必填参数
+POST {{url}}/api/v1/user/login
+Content-Type: application/json
+
+{
+    "userAccount": "",
+    "userPassword": ""
+}
+
+### 登录失败 - 账号长度不足
+POST {{url}}/api/v1/user/login
+Content-Type: application/json
+
+{
+    "userAccount": "test",
+    "userPassword": "password123"
+}
+
+### 登录失败 - 密码长度不足
+POST {{url}}/api/v1/user/login
+Content-Type: application/json
+
+{
+    "userAccount": "testuser",
+    "userPassword": "pass"
+}
+
+### 登录失败 - 账号包含特殊字符
+POST {{url}}/api/v1/user/login
+Content-Type: application/json
+
+{
+    "userAccount": "test@user",
+    "userPassword": "password123"
+}
+
+### 登录失败 - 账号不存在
+POST {{url}}/api/v1/user/login
+Content-Type: application/json
+
+{
+    "userAccount": "nonexistent",
+    "userPassword": "password123"
+}
+
+### 登录失败 - 密码错误
+POST {{url}}/api/v1/user/login
+Content-Type: application/json
+
+{
+    "userAccount": "{{userAccount1}}",
+    "userPassword": "wrongpassword"
+}
+
+### 登录失败 - 无效的JSON请求体
+POST {{url}}/api/v1/user/login
+Content-Type: application/json
+
+invalid json
+

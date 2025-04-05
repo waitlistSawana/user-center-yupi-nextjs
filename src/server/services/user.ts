@@ -7,6 +7,7 @@
 import { getLoginUser, insertUser, isUserExist } from "../repositories/user";
 import { hashPassword } from "../utils/hash";
 import { createSession } from "../utils/session";
+import type { SafeUser } from "../db/types";
 
 /**
  * 用户注册功能
@@ -19,7 +20,7 @@ import { createSession } from "../utils/session";
  * @param {string} params.userPassword - 用户密码，长度8-20位，需包含字母和数字
  * @param {string} params.checkPassword - 确认密码，必须与userPassword一致
  *
- * @returns {number} 返回注册成功的用户信息 成功为 userId 失败为 -1
+ * @returns {Promise<{userId: number, message: string}>} 返回注册成功的用户信息 成功为 userId 失败为 -1
  */
 export async function userRegister({
   userAccount,
@@ -29,29 +30,57 @@ export async function userRegister({
   userAccount: string;
   userPassword: string;
   checkPassword: string;
-}): Promise<number> {
+}): Promise<{ userId: number; message: string }> {
   // 1。 校验
-  if (!userAccount || !userPassword || !checkPassword) return -1;
-  if (userAccount.length < 6) return -1;
-  if (userPassword.length < 8 || checkPassword.length < 8) return -1;
+  if (!userAccount || !userPassword || !checkPassword) {
+    return {
+      userId: -1,
+      message:
+        "Missing required fields: userAccount, userPassword, or checkPassword",
+    };
+  }
+  if (userAccount.length < 6) {
+    return {
+      userId: -1,
+      message: "User account must be at least 6 characters long",
+    };
+  }
+  if (userPassword.length < 8 || checkPassword.length < 8) {
+    return {
+      userId: -1,
+      message: "Password must be at least 8 characters long",
+    };
+  }
   // 校验账户不能包含特殊字符
   const matchResult = /^[a-zA-Z][a-zA-Z0-9_]{4,15}$/.exec(userAccount);
-  if (!matchResult) return -1;
+  if (!matchResult) {
+    return {
+      userId: -1,
+      message:
+        "User account must start with a letter and can only contain letters, numbers, and underscores",
+    };
+  }
   // 密码和校验密码是否一致（类型判断，长度，格式）
-  if (userPassword.localeCompare(checkPassword) !== 0) return -1;
-  // 账户不能重复
+  if (userPassword.localeCompare(checkPassword) !== 0) {
+    return { userId: -1, message: "Passwords do not match" };
+  }
+  // 账户不能重复 - 数据库访问
   const isDuplicate = await isUserExist(userAccount);
-  if (isDuplicate) return -1;
+  if (isDuplicate) {
+    return { userId: -1, message: "User account already exists" };
+  }
 
   // 2. 加密密码
   const hashedPassword = await hashPassword(userPassword);
 
   // 3. 存入数据库
   const insertedUserId = await insertUser(userAccount, hashedPassword);
-  if (insertedUserId === -1) return -1;
+  if (insertedUserId === -1) {
+    return { userId: -1, message: "Failed to create user account" };
+  }
 
   // 通过校验
-  return insertedUserId;
+  return { userId: insertedUserId, message: "User registration successful" };
 }
 
 /**
@@ -62,7 +91,11 @@ export async function userRegister({
  * @param userAccount 用户账号
  * @param userPassword 用户密码
  *
- * @returns
+ * @returns {Promise<{code: 0 | 1 | 2, message: string, user: SafeUser | null}>}
+ * 返回登录结果：
+ * - code: 0 成功，1 校验不通过，2 获取登录用户信息失败
+ * - message: 结果描述
+ * - user: 成功时返回用户信息，失败时为 null
  */
 export async function userLogin({
   userAccount,
@@ -71,22 +104,48 @@ export async function userLogin({
   userAccount: string;
   userPassword: string;
 }): Promise<{
-  id: number;
-  userAccount: string;
-} | null> {
+  code: 0 | 1 | 2;
+  message: string;
+  user: SafeUser | null;
+}> {
   // 1。 校验
-  if (!userAccount || !userPassword) return null;
-  if (userAccount.length < 6) return null;
-  if (userPassword.length < 8) return null;
+  if (!userAccount || !userPassword)
+    return {
+      code: 1,
+      message: "Missing required fields: userAccount or userPassword",
+      user: null,
+    };
+  if (userAccount.length < 6)
+    return {
+      code: 1,
+      message: "User account must be at least 6 characters long",
+      user: null,
+    };
+  if (userPassword.length < 8)
+    return {
+      code: 1,
+      message: "Password must be at least 8 characters long",
+      user: null,
+    };
   // 校验账户不能包含特殊字符
   const matchResult = /^[a-zA-Z][a-zA-Z0-9_]{4,15}$/.exec(userAccount);
-  if (!matchResult) return null;
+  if (!matchResult)
+    return {
+      code: 1,
+      message:
+        "User account must start with a letter and can only contain letters, numbers, and underscores",
+      user: null,
+    };
 
   // 2. 获取登录用户信息
   const matchedUserResponse = await getLoginUser(userAccount, userPassword);
-  if (matchedUserResponse?.code !== 0) return null;
-  if (!matchedUserResponse?.user) return null;
-  const user = matchedUserResponse.user;
+  const { code, user, message } = matchedUserResponse;
+  if (code !== 0 || !user)
+    return {
+      code: 2,
+      message: message,
+      user: null,
+    };
 
   // 3. 记录用户登录态
   /**
@@ -100,7 +159,10 @@ export async function userLogin({
    */
   await createSession(user.id.toString());
 
-
   // 通过校验
-  return user;
+  return {
+    code: 0,
+    message: "Login successful",
+    user: user,
+  };
 }
