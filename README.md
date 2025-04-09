@@ -1,12 +1,14 @@
 # 用户中心项目 - 鱼皮
 
+基于 Nextjs 改造编程导航的 “用户中心” 项目，原技术栈为 java + react
+
 ## 技术栈
 
 ### 前端
 
 - Nextjs 15 App Router
 
-- ShadcnUi 组件库
+- ShadcnUI 组件库
 
 - Tailwindcss 4.x
 
@@ -22,7 +24,9 @@
 
 ### 测试
 
-- Vitest：测试文件位于 src/test 目录下
+- Vitest：测试文件位于 `src/test` 目录下
+
+- Rest Client: VsCode 插件，测试接口，位于 `src/test/rest-client` 目录下
 
 ### 其他第三方依赖
 
@@ -33,3 +37,44 @@
 - lucide-react：开源图标库
 
 - Jose: JWT 库，session 管理，兼容 Edge Runtime
+
+## 启动项目
+
+本地启动项目：
+
+1. 初始化环境配置
+
+配置好 `node.js` 和 `pnpm` 等包管理工具。当前为 `pnpm@9.1.0` 可在 `./package.json` 中更改。
+
+复制 `.env.example` 为 `.env` 文件，并完善。
+
+在 `Docker` 桌面端，初始化 `MySQL` 数据库。详细步骤见 `./start-database.sh`。（由 T3 Stack 构建）
+
+2. 初始化项目
+
+基于 T3 Stack 模板搭建
+
+启动项目
+
+```bash
+pnpm i
+pnpm db:generate
+pnpm db:push
+```
+
+3. 构建
+
+开发构建
+
+```bash 
+pnpm dev
+```
+
+生产构建
+
+```bash
+pnpm build
+pnpm start
+```
+
+更多指令，见 `./package.json`

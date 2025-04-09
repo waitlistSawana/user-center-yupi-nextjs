@@ -2,6 +2,9 @@
  * 仅服务端使用 密码工具函数
  *
  * @author Sawana Huang
+ * 
+ * @see hashPassword 加密密码
+ * @see verifyPassword 验证密码
  */
 
 import "server-only";

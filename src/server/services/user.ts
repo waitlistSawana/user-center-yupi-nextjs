@@ -2,11 +2,21 @@
  * 用户服务
  *
  * @author Sawana Huang
+ *
+ * @see userRegister 用户注册功能，包括账号和密码的合法性校验
+ * @see userLogin 用户登录功能，验证用户账号密码，以及生成登录凭证
  */
 
-import { getLoginUser, insertUser, isUserExist } from "../repositories/user";
+import {
+  deleteUserById,
+  getLoginUserByUserAccount,
+  insertUser,
+  isUserAdminByUserAccount,
+  isUserExistByUserAccount,
+  searchUsers,
+} from "../repositories/user";
 import { hashPassword } from "../utils/hash";
-import { createSession } from "../utils/session";
+import { createSession, getCurrentUserBySession } from "../utils/session";
 import type { SafeUser } from "../db/types";
 
 /**
@@ -65,7 +75,7 @@ export async function userRegister({
     return { userId: -1, message: "Passwords do not match" };
   }
   // 账户不能重复 - 数据库访问
-  const isDuplicate = await isUserExist(userAccount);
+  const isDuplicate = await isUserExistByUserAccount(userAccount);
   if (isDuplicate) {
     return { userId: -1, message: "User account already exists" };
   }
@@ -138,7 +148,10 @@ export async function userLogin({
     };
 
   // 2. 获取登录用户信息
-  const matchedUserResponse = await getLoginUser(userAccount, userPassword);
+  const matchedUserResponse = await getLoginUserByUserAccount(
+    userAccount,
+    userPassword,
+  );
   const { code, user, message } = matchedUserResponse;
   if (code !== 0 || !user)
     return {
@@ -164,5 +177,81 @@ export async function userLogin({
     code: 0,
     message: "Login successful",
     user: user,
+  };
+}
+
+/**
+ * 用户搜索功能
+ *
+ * @description 根据用户名和性别搜索用户，支持模糊匹配用户名。
+ * 返回符合条件的用户列表，用户信息不包含敏感字段。
+ *
+ * @param {Object} params - 搜索参数对象
+ * @param {string} [params.username] - 用户名，可选，支持模糊匹配
+ * @param {0 | 1} [params.gender] - 性别，可选，0-女性，1-男性
+ *
+ * @returns {Promise<SafeUser[]>} 返回符合条件的用户列表
+ */
+export async function userSearchByParams(params: {
+  username?: string;
+  gender?: 0 | 1;
+}): Promise<SafeUser[]> {
+  const users = await searchUsers(params);
+  return users;
+}
+
+/**
+ * 用户删除功能
+ *
+ * @description 实现用户删除功能，需要管理员权限。
+ * 通过软删除方式（更新isDelete字段）删除指定用户。
+ *
+ * @param {number} userId - 要删除的用户ID
+ *
+ * @returns {Promise<{suceess: boolean, code: 0 | 1 | 2, message: string}>}
+ * 返回删除结果：
+ * - success: 操作是否成功
+ * - code: 0 成功，1 未登录，2 无权限
+ * - message: 结果描述
+ */
+export async function userDeleteByUserId(userId: number): Promise<{
+  suceess: boolean;
+  code: 0 | 1 | 2;
+  message: string;
+}> {
+  // 1. 验证用户权限
+  const { userAccount, isUserLogin } = await getCurrentUserBySession();
+  if (!userAccount || !isUserLogin) {
+    return {
+      suceess: false,
+      code: 1,
+      message: "User not logged in",
+    };
+  }
+
+  // 2. 验证是否为管理员
+  const isAdmin = await isUserAdminByUserAccount(userAccount);
+  if (!isAdmin) {
+    return {
+      suceess: false,
+      code: 2,
+      message: "Insufficient permissions",
+    };
+  }
+
+  // 3. 执行删除操作
+  const deleteResult = await deleteUserById(userId);
+  if (deleteResult.code !== 0) {
+    return {
+      suceess: false,
+      code: 2,
+      message: deleteResult.message,
+    };
+  }
+
+  return {
+    suceess: true,
+    code: 0,
+    message: "User deleted successfully",
   };
 }

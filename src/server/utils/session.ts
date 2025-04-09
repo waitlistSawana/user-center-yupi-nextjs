@@ -3,6 +3,13 @@
  *
  * @author Sawana Huang
  *
+ * @see encrypt 加密
+ * @see decrypt 解密
+ * @see createSession 创建会话
+ * @see updateSession 更新会话
+ * @see deleteSession 删除会话
+ * @see getCurrentUserBySession 通过会话获取当前用户
+ *
  * @date 2025-04-04
  *
  * 参考 nextjs 文档： https://nextjs.org/docs/app/building-your-application/authentication#session-management
@@ -95,31 +102,38 @@ export async function decrypt(
  *
  * @description 为用户创建新的会话，生成 JWT token 并设置到 Cookie 中
  *
- * @param {string} subject - 用户唯一标识
+ * @param {string} subject - 用户唯一标识：{string} userAccount
+ *
+ * @returns Promise<boolean> 返回是否创建成功
  *
  * @example
  * // 用户登录后创建会话
  * await createSession("12345");
  */
-export async function createSession(subject: string) {
-  const expiresAt = new Date(Date.now() + 7 * 4 * 24 * 60 * 60 * 1000);
-  const session = await encrypt({
-    sub: subject,
-    exp: Math.floor(expiresAt.getTime() / 1000),
-  });
-  const cookieStore = await cookies();
+export async function createSession(subject: string): Promise<boolean> {
+  try {
+    const expiresAt = new Date(Date.now() + 7 * 4 * 24 * 60 * 60 * 1000);
+    const session = await encrypt({
+      sub: subject,
+      exp: Math.floor(expiresAt.getTime() / 1000),
+    });
+    const cookieStore = await cookies();
 
-  /**
-   * 设置 cookie
-   * set( 名称， 值， 配置选项 )
-   */
-  cookieStore.set(SESSION_COOKIE_NAME, session, {
-    httpOnly: true, // 仅服务器
-    secure: true, // 仅 https
-    expires: expiresAt, // 过期时间
-    sameSite: "lax", // 限制跨域 ’lax' 允许跨站请求
-    path: "/", // 作用路径 '/' 表示整个网站
-  });
+    /**
+     * 设置 cookie
+     * set( 名称， 值， 配置选项 )
+     */
+    cookieStore.set(SESSION_COOKIE_NAME, session, {
+      httpOnly: true, // 仅服务器
+      secure: true, // 仅 https
+      expires: expiresAt, // 过期时间
+      sameSite: "lax", // 限制跨域 ’lax' 允许跨站请求
+      path: "/", // 作用路径 '/' 表示整个网站
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 /**
@@ -179,4 +193,50 @@ export async function updateSession(): Promise<boolean> {
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete(SESSION_COOKIE_NAME);
+}
+
+/**
+ * 获取当前用户信息
+ *
+ * @description 从 Cookie 中获取并解析会话信息，用于验证用户登录状态
+ *
+ * @returns Promise<{
+ *   userId: string | null;
+ *   isUserLogin: boolean;
+ * }>
+ *
+ * @example
+ * // 在 API 路由中使用
+ * const { userId, isUserLogin } = await getCurrentUserBySession();
+ * if (!isUserLogin) {
+ *   // 处理未登录情况
+ * }
+ */
+export async function getCurrentUserBySession(): Promise<{
+  userAccount: string | null;
+  isUserLogin: boolean;
+}> {
+  try {
+    const cookieStore = await cookies();
+    const session = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+    const payload = await decrypt(session);
+    const userAccount = payload?.sub;
+
+    if (!session || !payload || !userAccount) {
+      return {
+        userAccount: null,
+        isUserLogin: false,
+      };
+    }
+
+    return {
+      userAccount: userAccount,
+      isUserLogin: true,
+    };
+  } catch (error) {
+    return {
+      userAccount: null,
+      isUserLogin: false,
+    };
+  }
 }

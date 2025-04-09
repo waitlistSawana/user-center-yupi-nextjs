@@ -1,0 +1,49 @@
+@url = http://localhost:3000
+@userAccount = testuser64
+@adminCookie = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0Mzk0NzkxNywiZXhwIjoxNzQ2MzY3MTE3fQ.w52jgZEM1lNAK2zenJoI9SykI-lrJ-5k_1pq0NwCB7k
+@userCookie = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjI2IiwiaWF0IjoxNzQzOTQ3OTE3LCJleHAiOjE3NDYzNjcxMTd9.eCJPsLDBopciNiPSK54uCTLPpUCvMx7qz8IcPozchoI
+@wrongUserCookie = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3cm9uZ1VzZXIiLCJpYXQiOjE3NDM5NDc5MTcsImV4cCI6MTc0NjM2NzExN30.dMCH-28KTR0BTpBSvlbKDBnNOYTA2GZQ7bAO8xDbq6U
+
+### 成功删除用户
+POST {{url}}/api/v1/user/delete
+Content-Type: application/json
+Cookie: user-center-sawana-session={{adminCookie}}
+
+{
+    "userId": 3
+}
+
+### 删除失败 - 未登录
+POST {{url}}/api/v1/user/delete
+Content-Type: application/json
+
+{
+    "userId": 4
+}
+
+### 删除失败 - 无权限（非管理员）
+POST {{url}}/api/v1/user/delete
+Content-Type: application/json
+Cookie: user-center-sawana-session={{userCookie}}
+
+{
+    "userId": 3
+}
+
+### 删除失败 - 无效的请求体
+POST {{url}}/api/v1/user/delete
+Content-Type: application/json
+Cookie: user-center-sawana-session={{adminCookie}}
+
+invalid json
+
+### 删除失败 - 用户不存在
+POST {{url}}/api/v1/user/delete
+Content-Type: application/json
+Cookie: user-center-sawana-session={{adminCookie}}
+
+{
+    "userId": 999
+}
+
+

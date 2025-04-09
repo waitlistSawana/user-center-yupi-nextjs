@@ -7,7 +7,7 @@ import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import { NextResponse } from "next/server";
 
 /**
- * 转换 TRPCError 为标准的 Next.js HTTP 响应
+ * 转换 TRPCError 为标准的 Next.js HTTP 响应 NextResponse
  *
  * @description 将 tRPC 的错误对象转换为标准的 Next.js Response，
  * 保留原始错误信息的同时，确保正确的 HTTP 状态码和状态描述。
