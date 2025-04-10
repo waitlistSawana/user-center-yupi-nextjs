@@ -24,11 +24,11 @@ interface UserDeleteRequestBody {
  *   - FORBIDDEN (403): 无权限操作
  *   - INTERNAL_SERVER_ERROR (500): 服务器错误
  *
- * @throws {TRPCError}
+ * @throws {NextResponse}
  * - 当请求体解析失败时
  * - 当服务器内部错误时
  */
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const { userId } = (await req.json()) as UserDeleteRequestBody;
 

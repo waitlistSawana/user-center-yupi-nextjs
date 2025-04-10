@@ -12,7 +12,7 @@
  */
 
 import "server-only";
-import { eq, SQL } from "drizzle-orm";
+import { eq, type SQL } from "drizzle-orm";
 import { db } from "../db";
 import { users } from "../db/schema";
 import { verifyPassword } from "../utils/hash";
@@ -108,17 +108,20 @@ export async function isUserAdminByUserAccount(
  * @description 根据用户名和明文密码创建用户
  *
  * @param userAccount
+ * @param email
  * @param hashedPassword
  * @returns -1 表示失败，其他表示成功
  */
 export async function insertUser(
   userAccount: string,
+  email: string,
   hashedPassword: string,
 ): Promise<number> {
   const insertedUser = await db
     .insert(users)
     .values({
       userAccount: userAccount,
+      email: email,
       userPassword: hashedPassword,
     })
     .$returningId();
@@ -323,7 +326,7 @@ export async function deleteUserById(userId: number): Promise<{
   }
 
   // 3. 执行软删除
-  await db.update(users).set({ isDelete: 1 }).where(eq(users.id, userId))
+  await db.update(users).set({ isDelete: 1 }).where(eq(users.id, userId));
 
   return {
     code: 0,

@@ -27,6 +27,7 @@ import type { SafeUser } from "../db/types";
  *
  * @param {Object} params - 注册参数对象
  * @param {string} params.userAccount - 用户账号，长度6-20位，由字母、数字组成
+ * @param {string} params.email - 用户邮箱
  * @param {string} params.userPassword - 用户密码，长度8-20位，需包含字母和数字
  * @param {string} params.checkPassword - 确认密码，必须与userPassword一致
  *
@@ -34,19 +35,21 @@ import type { SafeUser } from "../db/types";
  */
 export async function userRegister({
   userAccount,
+  email,
   userPassword,
   checkPassword,
 }: {
   userAccount: string;
+  email: string;
   userPassword: string;
   checkPassword: string;
 }): Promise<{ userId: number; message: string }> {
   // 1。 校验
-  if (!userAccount || !userPassword || !checkPassword) {
+  if (!userAccount || !email || !userPassword || !checkPassword) {
     return {
       userId: -1,
       message:
-        "Missing required fields: userAccount, userPassword, or checkPassword",
+        "Missing required fields: userAccount, email, userPassword, or checkPassword",
     };
   }
   if (userAccount.length < 6) {
@@ -84,7 +87,7 @@ export async function userRegister({
   const hashedPassword = await hashPassword(userPassword);
 
   // 3. 存入数据库
-  const insertedUserId = await insertUser(userAccount, hashedPassword);
+  const insertedUserId = await insertUser(userAccount, email, hashedPassword);
   if (insertedUserId === -1) {
     return { userId: -1, message: "Failed to create user account" };
   }
@@ -228,8 +231,7 @@ export async function userDeleteByUserId(userId: number): Promise<{
       message: "User not logged in",
     };
   }
-
-  // 2. 验证是否为管理员
+  // 验证是否为管理员
   const isAdmin = await isUserAdminByUserAccount(userAccount);
   if (!isAdmin) {
     return {
@@ -239,7 +241,7 @@ export async function userDeleteByUserId(userId: number): Promise<{
     };
   }
 
-  // 3. 执行删除操作
+  // 2. 执行删除操作
   const deleteResult = await deleteUserById(userId);
   if (deleteResult.code !== 0) {
     return {

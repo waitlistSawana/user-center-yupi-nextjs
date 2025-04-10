@@ -2,6 +2,8 @@
 
 基于 Nextjs 改造编程导航的 “用户中心” 项目，原技术栈为 java + react
 
+https://www.codefather.cn/course/1790943469757837313
+
 ## 技术栈
 
 ### 前端

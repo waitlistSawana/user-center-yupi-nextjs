@@ -30,6 +30,7 @@ export async function GET() {
       {
         code: 500,
         message: "服务器内部错误",
+        error: error,
       },
       { status: 500 },
     );
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
       {
         code: 500,
         message: "服务器内部错误",
+        error: error,
       },
       { status: 500 },
     );
