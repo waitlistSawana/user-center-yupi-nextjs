@@ -6,14 +6,18 @@ import type {
 } from "@/app/api/v1/user/register/route";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { TRPCError } from "@trpc/server";
 import axios from "axios";
+import { Loader2Icon } from "lucide-react";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Input } from "./aceternity/input";
 import { Label } from "./aceternity/label";
 import { IconGithub, IconGoogle } from "./icons";
+import { useForm } from "react-hook-form";
 import { Form, FormField, FormMessage } from "./ui/form";
+import { redirect } from "next/navigation";
 
 const signUpFormSchema = z
   .object({
@@ -23,7 +27,7 @@ const signUpFormSchema = z
     }),
     password: z
       .string()
-      .min(6, { message: "Password should at least 6 characters." }),
+      .min(8, { message: "Password should at least 8 characters." }),
     repeatPassword: z.string(),
   })
   .refine((data) => data.password === data.repeatPassword, {
@@ -32,7 +36,13 @@ const signUpFormSchema = z
   });
 
 export function SignupForm() {
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
+
   async function onSubmit(values: z.infer<typeof signUpFormSchema>) {
+    setIsLoading(true);
+    setError(null);
+
     try {
       const registerRespondse =
         await axios.post<UserRegisterSuccessPostResponse>(
@@ -47,7 +57,30 @@ export function SignupForm() {
 
       console.log("Sign-up submit", values);
     } catch (error) {
-      console.error("sign-up faild:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("sign-up faild:", error.response?.data);
+        const trpcError = error.response?.data as TRPCError;
+        setError(trpcError.message);
+
+        const isUserExists =
+          trpcError.message === "User account already exists";
+
+        if (isUserExists) {
+          toast.error(trpcError.code, {
+            description: trpcError.message,
+            action: {
+              label: "Login",
+              onClick: () => redirect("/login"),
+            },
+          });
+        } else {
+          toast.error(trpcError.code, {
+            description: trpcError.message,
+          });
+        }
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -66,6 +99,7 @@ export function SignupForm() {
       <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
         Welcome to Aceternity
       </h2>
+
       <p className="mt-2 max-w-sm text-sm text-neutral-600 dark:text-neutral-300">
         Login to aceternity if you can because we don&apos;t have a login flow
         yet
@@ -141,15 +175,22 @@ export function SignupForm() {
           />
 
           <button
-            className="group/btn bloc relative mb-6 h-10 w-full cursor-pointer rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset]"
+            className={cn(
+              "group/btn relative mb-6 block h-10 w-full cursor-pointer rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] transition-all dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset]",
+              isLoading ? "cursor-not-allowed opacity-70" : null,
+            )}
             type="submit"
+            disabled={isLoading}
           >
+            {isLoading ? (
+              <Loader2Icon className="absolute right-2 animate-spin" />
+            ) : null}
             Sign up &rarr;
             <BottomGradient />
           </button>
 
           <div>
-            <p className="text-center opacity-50 hover:opacity-100">
+            <p className="text-center opacity-70 transition-all hover:opacity-100">
               <span>Already have an account?</span>
               <a
                 href="/login"
