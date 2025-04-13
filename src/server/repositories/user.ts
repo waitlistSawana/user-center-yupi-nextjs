@@ -8,6 +8,7 @@
  * @see insertUser 创建新用户，保存用户账号和加密后的密码
  * @see getLoginUserByUserAccount 用户登录验证，检查账号密码并返回用户信息
  * @see searchUsers 多条件查询用户列表，支持用户名模糊搜索和性别筛选
+ * @see selectUserByUserAcount 根据用户账号查询用户信息
  * @see deleteUserById 根据用户 ID 软删除用户，支持管理员权限验证
  */
 
@@ -296,6 +297,69 @@ export async function searchUsers(params: {
     createTime: user.createTime,
     updateTime: user.updateTime,
   }));
+}
+
+/**
+ * 根据用户账号查询用户信息
+ *
+ * @description 根据用户账号查询用户基本信息，不包含敏感字段（如密码）。
+ * 如果用户不存在或查询出错，返回 null。
+ *
+ * @param {string} userAccount - 用户账号
+ * 
+ * @returns {Promise<SafeUser | null>} 返回用户信息对象或 null
+ * - 成功：返回用户信息，包含以下字段：
+ *   - id: 用户ID
+ *   - userAccount: 用户账号
+ *   - username: 用户昵称
+ *   - avatarUrl: 头像URL
+ *   - gender: 性别（0-女，1-男）
+ *   - userRole: 用户角色
+ *   - userStatus: 用户状态
+ *   - planetCode: 星球编号
+ *   - createTime: 创建时间
+ *   - updateTime: 更新时间
+ * - 失败：返回 null（用户不存在或查询出错）
+ * 
+ * @example
+ * // 查询指定用户信息
+ * const user = await selectUserByUserAcount("zhangsan");
+ */
+export async function selectUserByUserAcount(
+  userAccount: string,
+): Promise<SafeUser | null> {
+  if (!userAccount) {
+    return null;
+  }
+
+  try {
+    const user = await db.query.users.findFirst({
+      where: (users, { eq, and }) => {
+        return and(eq(users.isDelete, 0), eq(users.userAccount, userAccount));
+      },
+      columns: {
+        id: true,
+        userAccount: true,
+        username: true,
+        avatarUrl: true,
+        gender: true,
+        userRole: true,
+        userStatus: true,
+        isDelete: true,
+        planetCode: true,
+        createTime: true,
+        updateTime: true,
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  } catch (error) {
+    return null;
+  }
 }
 
 /**

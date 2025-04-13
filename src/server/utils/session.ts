@@ -202,7 +202,7 @@ export async function deleteSession() {
  * @description 从 Cookie 中获取并解析会话信息，用于验证用户登录状态
  *
  * @returns Promise<{
- *   userId: string | null;
+ *   userAccount: string | null;
  *   isUserLogin: boolean;
  * }>
  *

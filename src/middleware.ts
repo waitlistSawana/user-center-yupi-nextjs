@@ -8,6 +8,13 @@ export function middleware(request: NextRequest) {
 
   // console.log({ sessionAuth, message: "middleware", url: request.url });
 
+  // 1. 如果是 api 或 trpc 路径，直接返回
+  const isApiPath = request.nextUrl.pathname.startsWith("/api");
+  const isTrpcPath = request.nextUrl.pathname.startsWith("/trpc");
+  if (isApiPath || isTrpcPath) {
+    return NextResponse.next();
+  }
+
   // 1. 如果是公开路径，直接返回
   const publicPaths = ["/login", "/register"];
   const isPublicPath = publicPaths.some((path) =>

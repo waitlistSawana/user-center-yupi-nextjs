@@ -68,7 +68,7 @@ pnpm db:push
 
 开发构建
 
-```bash 
+```bash
 pnpm dev
 ```
 
@@ -80,3 +80,20 @@ pnpm start
 ```
 
 更多指令，见 `./package.json`
+
+## Contribution
+
+### Commit Convention
+
+遵循 [Angular Commit Message Guidelines](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines) 参考 [ShacnUI Contributing](https://github.com/shadcn-ui/ui/blob/main/CONTRIBUTING.md#commit-convention)
+
+提交信息格式为：`category(scope or module): message`
+
+- `feat` / `feature`：引入全新代码或新功能的所有更改
+- `fix`：修复 bug 的更改（建议引用相关 issue）
+- `refactor`：代码重构（既不是修复 bug 也不是添加新功能）
+- `docs`：文档更新（如 README、API 文档等）
+- `build`：构建相关的更改（如依赖更新、新增依赖等）
+- `test`：测试相关的更改（新增或修改测试）
+- `ci`：CI 配置相关的更改（如 GitHub Actions、CI 系统等）
+- `chore`：其他不属于上述类别的更改

@@ -1,0 +1,10 @@
+@url = http://localhost:3000
+@userAccount = testuser64
+
+### 成功删除用户
+POST {{url}}/api/v1/user/current
+Content-Type: application/json
+
+{
+    
+}

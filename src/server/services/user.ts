@@ -5,6 +5,9 @@
  *
  * @see userRegister 用户注册功能，包括账号和密码的合法性校验
  * @see userLogin 用户登录功能，验证用户账号密码，以及生成登录凭证
+ * @see userSearchByParams 用户搜索功能，支持按用户名和性别搜索
+ * @see userSearchByUserAccount
+ * @see userDeleteByUserId 用户删除功能，需要管理员权限
  */
 
 import {
@@ -14,6 +17,7 @@ import {
   isUserAdminByUserAccount,
   isUserExistByUserAccount,
   searchUsers,
+  selectUserByUserAcount,
 } from "../repositories/user";
 import { hashPassword } from "../utils/hash";
 import { createSession, getCurrentUserBySession } from "../utils/session";
@@ -201,6 +205,57 @@ export async function userSearchByParams(params: {
 }): Promise<SafeUser[]> {
   const users = await searchUsers(params);
   return users;
+}
+
+/**
+ * 通过用户账号获取用户信息
+ *
+ * @description 根据用户账号查询用户信息，不包含敏感字段。
+ * 如果用户账号为空或用户不存在则返回错误信息。
+ *
+ * @param {string} userAccount - 用户账号
+ *
+ * @returns {Promise<{code: 0 | 1, message: string, user: SafeUser | null}>} 返回查询结果
+ * - code: 0 表示成功，1 表示校验失败, 2 表示用户不存在
+ * - message: 结果描述信息
+ * - user: 成功时返回用户信息，失败时为 null
+ *
+ * @example
+ * const result = await userSearchByUserAccount("zhangsan");
+ * if (result.code === 0) {
+ *   console.log("用户信息:", result.user);
+ * } else {
+ *   console.log("错误:", result.message);
+ * }
+ */
+export async function userSearchByUserAccount(userAccount: string): Promise<{
+  code: 0 | 1 | 2;
+  message: string;
+  user: SafeUser | null;
+}> {
+  if (!userAccount) {
+    return {
+      code: 1,
+      message: "User account is empty",
+      user: null,
+    };
+  }
+
+  const user = await selectUserByUserAcount(userAccount);
+
+  if (!user) {
+    return {
+      code: 2,
+      message: "User not found",
+      user: null,
+    };
+  }
+
+  return {
+    code: 0,
+    message: "succcess",
+    user: user,
+  };
 }
 
 /**
