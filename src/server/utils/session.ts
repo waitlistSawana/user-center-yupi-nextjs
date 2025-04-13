@@ -21,9 +21,10 @@ import { cookies } from "next/headers";
 import { env } from "@/env";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 
+import { SESSION_COOKIE_NAME } from "@/lib/constant/server";
+
 const secretKey = env.SESSION_SECRET_KEY;
 const encodedKey = new TextEncoder().encode(secretKey);
-const SESSION_COOKIE_NAME = "user-center-sawana-session";
 
 /**
  * 创建加密后的 session

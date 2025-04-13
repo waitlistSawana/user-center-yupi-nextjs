@@ -8,20 +8,19 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { TRPCError } from "@trpc/server";
 import axios from "axios";
-import { Loader2Icon } from "lucide-react";
+import { redirect } from "next/navigation";
 import React from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Input } from "./aceternity/input";
-import { Label } from "./aceternity/label";
-import { IconGithub, IconGoogle } from "./icons";
-import { useForm } from "react-hook-form";
-import { Form, FormField, FormMessage } from "./ui/form";
-import { redirect } from "next/navigation";
 import {
   ButtonOAuthSign,
   ButtonSign,
 } from "./aceternity/button-bottom-gradient";
+import { Input } from "./aceternity/input";
+import { Label } from "./aceternity/label";
+import { IconGithub, IconGoogle } from "./icons";
+import { Form, FormField, FormMessage } from "./ui/form";
 
 const signUpFormSchema = z
   .object({
