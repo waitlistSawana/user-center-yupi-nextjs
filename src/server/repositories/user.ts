@@ -9,6 +9,7 @@
  * @see getLoginUserByUserAccount 用户登录验证，检查账号密码并返回用户信息
  * @see searchUsers 多条件查询用户列表，支持用户名模糊搜索和性别筛选
  * @see selectUserByUserAcount 根据用户账号查询用户信息
+ * @see selectAllUsers
  * @see deleteUserById 根据用户 ID 软删除用户，支持管理员权限验证
  */
 
@@ -306,7 +307,7 @@ export async function searchUsers(params: {
  * 如果用户不存在或查询出错，返回 null。
  *
  * @param {string} userAccount - 用户账号
- * 
+ *
  * @returns {Promise<SafeUser | null>} 返回用户信息对象或 null
  * - 成功：返回用户信息，包含以下字段：
  *   - id: 用户ID
@@ -320,7 +321,7 @@ export async function searchUsers(params: {
  *   - createTime: 创建时间
  *   - updateTime: 更新时间
  * - 失败：返回 null（用户不存在或查询出错）
- * 
+ *
  * @example
  * // 查询指定用户信息
  * const user = await selectUserByUserAcount("zhangsan");
@@ -357,6 +358,57 @@ export async function selectUserByUserAcount(
     }
 
     return user;
+  } catch (error) {
+    return null;
+  }
+}
+
+/**
+ * 查询所有用户信息
+ *
+ * @description 查询所有用户的基本信息，不包含敏感字段（如密码）。
+ * 如果查询出错，返回 null。
+ *
+ * @returns {Promise<SafeUser | null>} 返回用户信息数组或 null
+ */
+export async function selectAllUsers(): Promise<SafeUser[] | null> {
+  try {
+    const users = await db.query.users.findMany({
+      where: (users, { eq, and }) => {
+        return and(eq(users.isDelete, 0));
+      },
+      columns: {
+        id: true,
+        userAccount: true,
+        username: true,
+        avatarUrl: true,
+        gender: true,
+        userRole: true,
+        userStatus: true,
+        isDelete: true,
+        planetCode: true,
+        createTime: true,
+        updateTime: true,
+      },
+    });
+
+    if (!users || users.length === 0) {
+      return null;
+    }
+
+    return users.map((user) => ({
+      id: user.id,
+      userAccount: user.userAccount,
+      username: user.username,
+      avatarUrl: user.avatarUrl,
+      gender: user.gender,
+      userRole: user.userRole,
+      userStatus: user.userStatus,
+      isDelete: user.isDelete,
+      planetCode: user.planetCode,
+      createTime: user.createTime,
+      updateTime: user.updateTime,
+    }));
   } catch (error) {
     return null;
   }

@@ -17,6 +17,7 @@ import {
   isUserAdminByUserAccount,
   isUserExistByUserAccount,
   searchUsers,
+  selectAllUsers,
   selectUserByUserAcount,
 } from "../repositories/user";
 import { hashPassword } from "../utils/hash";
@@ -310,5 +311,23 @@ export async function userDeleteByUserId(userId: number): Promise<{
     suceess: true,
     code: 0,
     message: "User deleted successfully",
+  };
+}
+
+export async function userGetAll() {
+  const users = await selectAllUsers();
+
+  if (!users) {
+    return {
+      code: 1,
+      message: "users not found",
+      users: null,
+    };
+  }
+
+  return {
+    code: 0,
+    message: "success",
+    users: users,
   };
 }

@@ -6,7 +6,7 @@ import { Geist } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 // sonner doc https://sonner.emilkowal.ski/getting-started
 import { Toaster } from "@/components/ui/sonner";
-import TankstackQueryProvider from "@/components/tanstack-query-provider";
+import TankstackQueryDevtools from "@/components/tanstack-query-devtools";
 
 export const metadata: Metadata = {
   title: "鱼皮用户中心 - Nextjs",
@@ -26,10 +26,9 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body>
         <TRPCReactProvider>
-          <TankstackQueryProvider>
-            {children}
-            <Toaster position="top-center" richColors />
-          </TankstackQueryProvider>
+          {children}
+          <Toaster position="top-center" richColors />
+          <TankstackQueryDevtools />
         </TRPCReactProvider>
       </body>
     </html>

@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
   }
 
   // 1. 如果是公开路径，直接返回
-  const publicPaths = ["/login", "/register"];
+  const publicPaths = ["/login", "/register", ""];
   const isPublicPath = publicPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path),
   );
