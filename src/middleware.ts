@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { SESSION_COOKIE_NAME } from "./lib/constant/server";
+import { SEARCH_PARAMS_FROM } from "./lib/constant/shared";
 
 export function middleware(request: NextRequest) {
   const cookies = request.cookies;
@@ -8,7 +9,7 @@ export function middleware(request: NextRequest) {
 
   // console.log({ sessionAuth, message: "middleware", url: request.url });
 
-  // 1. 如果是 api 或 trpc 路径，直接返回
+  // 如果是 api 或 trpc 路径，直接返回
   const isApiPath = request.nextUrl.pathname.startsWith("/api");
   const isTrpcPath = request.nextUrl.pathname.startsWith("/trpc");
   if (isApiPath || isTrpcPath) {
@@ -16,18 +17,23 @@ export function middleware(request: NextRequest) {
   }
 
   // 1. 如果是公开路径，直接返回
-  const publicPaths = ["/login", "/register", ""];
-  const isPublicPath = publicPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path),
+  const publicPaths = ["/login", "/register", "/"];
+  const isPublicPath = publicPaths.some(
+    (path) => request.nextUrl.pathname === path,
   );
 
   if (isPublicPath) {
+    // console.log("isPublicPath");
     return NextResponse.next();
   }
 
   // 2. 如果是登录路径，且未登录，跳转到 /login
+  // 用 from 关键字记录当前路径 pathname
   if (!sessionAuth?.value) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const fromPath = request.nextUrl.pathname;
+    const loginPath = new URL("/login", request.url);
+    loginPath.searchParams.set(SEARCH_PARAMS_FROM, fromPath);
+    return NextResponse.redirect(loginPath);
   }
 
   // 3. 默认返回

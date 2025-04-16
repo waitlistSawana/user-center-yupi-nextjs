@@ -187,13 +187,17 @@ export async function updateSession(): Promise<boolean> {
  * @description 清除用户的会话 Cookie，用于用户登出操作。
  * 调用此函数后，用户需要重新登录才能访问受保护的资源。
  *
+ * @returns {Promise<boolean>} 返回是否删除成功
+ *
  * @example
  * // 用户登出时调用
- * await deleteSession();
+ * const isSessionDeleted = await deleteSession();
  */
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete(SESSION_COOKIE_NAME);
+
+  return true;
 }
 
 /**

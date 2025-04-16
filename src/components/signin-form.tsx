@@ -21,6 +21,8 @@ import { Input } from "./aceternity/input";
 import { Label } from "./aceternity/label";
 import { IconGithub, IconGoogle } from "./icons";
 import { Form, FormField, FormMessage } from "./ui/form";
+import { useRouter, useSearchParams } from "next/navigation";
+import { SEARCH_PARAMS_FROM } from "@/lib/constant/shared";
 
 const signInFormSchema = z.object({
   userAccount: z.string().min(2).max(50),
@@ -30,6 +32,11 @@ const signInFormSchema = z.object({
 });
 
 export function SigninForm() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const from = searchParams.get(SEARCH_PARAMS_FROM) ?? "/welcome";
+
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
@@ -54,6 +61,8 @@ export function SigninForm() {
       toast.success("login success");
       // 可以在这里处理登录成功后的逻辑，比如存储 token
       console.log("登录成功", data);
+      // 重定向
+      router.push(from);
     },
     onError: (error) => {
       console.log("row error", error);

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { TRPCError } from "@trpc/server";
 import axios from "axios";
-import { redirect } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -21,6 +21,7 @@ import { Input } from "./aceternity/input";
 import { Label } from "./aceternity/label";
 import { IconGithub, IconGoogle } from "./icons";
 import { Form, FormField, FormMessage } from "./ui/form";
+import { SEARCH_PARAMS_FROM } from "@/lib/constant/shared";
 
 const signUpFormSchema = z
   .object({
@@ -39,6 +40,11 @@ const signUpFormSchema = z
   });
 
 export function SignupForm() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const from = searchParams.get(SEARCH_PARAMS_FROM) ?? "/welcome";
+
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -62,6 +68,7 @@ export function SignupForm() {
 
       if (registerRespondse.status === 200) {
         toast.success("register success");
+        router.push(from);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -50,6 +50,17 @@ export default async function Home() {
                 to deploy it.
               </div>
             </Link>
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
+              href="/user-manage"
+              // target="_blank"
+            >
+              <h3 className="text-2xl font-bold">用户管理 →</h3>
+              <div className="text-lg">
+                Learn more about Create T3 App, the libraries it uses, and how
+                to deploy it.
+              </div>
+            </Link>
           </div>
           <div className="flex flex-col items-center gap-2">
             <p className="text-2xl text-white">

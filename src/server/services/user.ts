@@ -8,6 +8,8 @@
  * @see userSearchByParams 用户搜索功能，支持按用户名和性别搜索
  * @see userSearchByUserAccount
  * @see userDeleteByUserId 用户删除功能，需要管理员权限
+ * @see userGetAll 获取所有用户信息
+ * @see userLogout 用户注销功能，清除登录凭证
  */
 
 import {
@@ -21,7 +23,11 @@ import {
   selectUserByUserAcount,
 } from "../repositories/user";
 import { hashPassword } from "../utils/hash";
-import { createSession, getCurrentUserBySession } from "../utils/session";
+import {
+  createSession,
+  deleteSession,
+  getCurrentUserBySession,
+} from "../utils/session";
 import type { SafeUser } from "../db/types";
 
 /**
@@ -329,5 +335,21 @@ export async function userGetAll() {
     code: 0,
     message: "success",
     users: users,
+  };
+}
+
+/**
+ * 用户注销功能
+ *
+ * @description 实现用户注销功能，清除登录凭证。
+ *
+ * @returns
+ */
+export async function userLogout() {
+  await deleteSession();
+
+  return {
+    code: 0,
+    message: "success",
   };
 }

@@ -35,3 +35,5 @@ export function TRPCErrorToNextResponse(error: TRPCError): NextResponse {
     { status: getHTTPStatusCodeFromError(error), statusText: error.code },
   );
 }
+
+// TODO: 编写一套错误码用于描述具体的错误类型，放在 TRPCError 的 cause 中
