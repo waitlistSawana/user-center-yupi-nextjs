@@ -44,7 +44,7 @@ export default function LogoutPage() {
     <div id="LogoutPage">
       <div className="space-y-4 text-center">
         <Loader2 className="text-primary mx-auto h-8 w-8 animate-spin" />
-        
+
         <h1 className="text-xl font-semibold">
           {isLoading ? "正在退出登录..." : error}
         </h1>

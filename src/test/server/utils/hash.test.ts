@@ -1,6 +1,5 @@
 // pnpm vitest run src/test/server/utils/hash.test.ts
 
-
 import { describe, it, expect } from "vitest";
 import { hashPassword, verifyPassword } from "@/server/utils/hash";
 

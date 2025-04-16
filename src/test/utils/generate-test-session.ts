@@ -43,23 +43,23 @@ export async function generateWrongUserSession(): Promise<string> {
 
 /**
  * 主函数
- * 
+ *
  * @description 运行生成测试会话token
  */
 async function main() {
-  console.log('生成管理员会话token...');
+  console.log("生成管理员会话token...");
   const adminToken = await generateAdminSession();
-  console.log('管理员会话token:', adminToken);
+  console.log("管理员会话token:", adminToken);
   console.log();
 
-  console.log('生成测试用户会话token...');
+  console.log("生成测试用户会话token...");
   const userToken = await generateTestUserSession();
-  console.log('测试用户会话token:', userToken);
+  console.log("测试用户会话token:", userToken);
   console.log();
 
-  console.log('生成错误用户会话token...');
+  console.log("生成错误用户会话token...");
   const wrongToken = await generateWrongUserSession();
-  console.log('错误用户会话token:', wrongToken);
+  console.log("错误用户会话token:", wrongToken);
 }
 
 // 执行主函数

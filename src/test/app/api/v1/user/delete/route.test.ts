@@ -19,7 +19,8 @@ describe("DELETE /api/v1/user/delete", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: "user-center-sawana-session=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0Mzk0NzkxNywiZXhwIjoxNzQ2MzY3MTE3fQ.w52jgZEM1lNAK2zenJoI9SykI-lrJ-5k_1pq0NwCB7k",
+          Cookie:
+            "user-center-sawana-session=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0Mzk0NzkxNywiZXhwIjoxNzQ2MzY3MTE3fQ.w52jgZEM1lNAK2zenJoI9SykI-lrJ-5k_1pq0NwCB7k",
         },
         body: JSON.stringify({ userId: mockUserId }),
       },
@@ -73,7 +74,8 @@ describe("DELETE /api/v1/user/delete", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: "user-center-sawana-session=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjI2IiwiaWF0IjoxNzQzOTQ3OTE3LCJleHAiOjE3NDYzNjcxMTd9.eCJPsLDBopciNiPSK54uCTLPpUCvMx7qz8IcPozchoI",
+          Cookie:
+            "user-center-sawana-session=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlcjI2IiwiaWF0IjoxNzQzOTQ3OTE3LCJleHAiOjE3NDYzNjcxMTd9.eCJPsLDBopciNiPSK54uCTLPpUCvMx7qz8IcPozchoI",
         },
         body: JSON.stringify({ userId: mockUserId }),
       },
@@ -97,7 +99,8 @@ describe("DELETE /api/v1/user/delete", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: "user-center-sawana-session=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0Mzk0NzkxNywiZXhwIjoxNzQ2MzY3MTE3fQ.w52jgZEM1lNAK2zenJoI9SykI-lrJ-5k_1pq0NwCB7k",
+          Cookie:
+            "user-center-sawana-session=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0Mzk0NzkxNywiZXhwIjoxNzQ2MzY3MTE3fQ.w52jgZEM1lNAK2zenJoI9SykI-lrJ-5k_1pq0NwCB7k",
         },
         body: "invalid json",
       },
@@ -116,7 +119,8 @@ describe("DELETE /api/v1/user/delete", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: "user-center-sawana-session=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0Mzk0NzkxNywiZXhwIjoxNzQ2MzY3MTE3fQ.w52jgZEM1lNAK2zenJoI9SykI-lrJ-5k_1pq0NwCB7k",
+          Cookie:
+            "user-center-sawana-session=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0Mzk0NzkxNywiZXhwIjoxNzQ2MzY3MTE3fQ.w52jgZEM1lNAK2zenJoI9SykI-lrJ-5k_1pq0NwCB7k",
         },
         body: JSON.stringify({ userId: mockUserId }),
       },

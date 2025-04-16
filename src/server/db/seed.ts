@@ -1,4 +1,4 @@
-// 运行示例数据插入 
+// 运行示例数据插入
 // npx tsx --env-file .env src/server/db/seed.ts
 
 import { db } from "./index";
