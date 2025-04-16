@@ -4,6 +4,8 @@ import { TRPCErrorToNextResponse } from "@/server/utils/error-handling";
 import { TRPCError } from "@trpc/server";
 import { NextResponse, type NextRequest } from "next/server";
 
+export const runtime = "edge";
+
 export interface UserLoginPostRequestBody {
   userAccount: string;
   userPassword: string;

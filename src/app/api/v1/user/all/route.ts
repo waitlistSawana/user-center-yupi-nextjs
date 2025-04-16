@@ -4,6 +4,8 @@ import { TRPCErrorToNextResponse } from "@/server/utils/error-handling";
 import { TRPCError } from "@trpc/server";
 import { NextResponse } from "next/server";
 
+export const runtime = "edge";
+
 export interface UserAllSuccessPostResponse {
   message: string;
   users: SafeUser[];

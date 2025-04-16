@@ -5,6 +5,8 @@ import { getCurrentUserBySession } from "@/server/utils/session";
 import { TRPCError } from "@trpc/server";
 import { NextResponse, type NextRequest } from "next/server";
 
+export const runtime = "edge";
+
 export interface UserCurrentGetResponse {
   code: 0;
   message: string;

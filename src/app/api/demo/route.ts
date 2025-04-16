@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+export const runtime = "edge";
+
 // 定义请求体的验证模式
 const postSchema = z.object({
   name: z.string().min(1, "名称不能为空"),
