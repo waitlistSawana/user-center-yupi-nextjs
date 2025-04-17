@@ -21,7 +21,7 @@ import { Input } from "./aceternity/input";
 import { Label } from "./aceternity/label";
 import { IconGithub, IconGoogle } from "./icons";
 import { Form, FormField, FormMessage } from "./ui/form";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { SEARCH_PARAMS_FROM } from "@/lib/constant/shared";
 
 const signInFormSchema = z.object({
@@ -63,6 +63,7 @@ export function SigninForm() {
       console.log("登录成功", data);
       // 重定向
       router.push(from);
+      redirect(from);
     },
     onError: (error) => {
       console.log("row error", error);
@@ -72,6 +73,12 @@ export function SigninForm() {
         toast.error(trpcError.code, {
           description: trpcError.message,
         });
+      }
+    },
+    onSettled(data) {
+      if (data?.user?.id) {
+        router.push(from);
+        redirect(from);
       }
     },
   });
