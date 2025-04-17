@@ -4,6 +4,8 @@ import { TRPCErrorToNextResponse } from "@/server/utils/error-handling";
 import { TRPCError } from "@trpc/server";
 import { NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 export interface UserAllSuccessPostResponse {
   message: string;
   users: SafeUser[];

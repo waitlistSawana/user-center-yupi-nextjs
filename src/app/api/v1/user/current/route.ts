@@ -5,6 +5,8 @@ import { getCurrentUserBySession } from "@/server/utils/session";
 import { TRPCError } from "@trpc/server";
 import { NextResponse, type NextRequest } from "next/server";
 
+export const maxDuration = 60;
+
 export interface UserCurrentGetSuccessResponse {
   code: 0;
   message: string;
