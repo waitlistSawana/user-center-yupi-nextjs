@@ -3,8 +3,6 @@ import { TRPCErrorToNextResponse } from "@/server/utils/error-handling";
 import { TRPCError } from "@trpc/server";
 import { NextResponse, type NextRequest } from "next/server";
 
-export const runtime = "edge";
-
 /**
  * 用户搜索接口
  *

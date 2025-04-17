@@ -32,13 +32,15 @@ https://www.codefather.cn/course/1790943469757837313
 
 ### 其他第三方依赖
 
-- bcrypt：密码加密
+- bcryptjs：密码加密 支持 edge runtime
 
 - zod：数据校验和类型定义
 
 - lucide-react：开源图标库
 
 - Jose: JWT 库，session 管理，兼容 Edge Runtime
+
+- date-fns：日期格式化
 
 ## 启动项目
 

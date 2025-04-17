@@ -1,3 +1,9 @@
+/**
+ * 方案一：MySQL 数据库连接
+ *
+ * 不可在 edge 运行时运行
+ * T3 代码参考：https://github.com/t3-oss/create-t3-app/blob/main/cli/template/extras/src/server/db/index-drizzle/with-mysql.ts
+ */
 import { drizzle } from "drizzle-orm/mysql2";
 import { createPool, type Pool } from "mysql2/promise";
 

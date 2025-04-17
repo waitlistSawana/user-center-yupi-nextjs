@@ -1,5 +1,5 @@
-import { DashboardDemo } from "@/components/aceternity/sidebar";
+import WelcomePageComponent from "./page-component";
 
-export default function WelcomePage() {
-  return <DashboardDemo />;
+export default async function WelcomePage() {
+  return <WelcomePageComponent />;
 }

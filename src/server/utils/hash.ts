@@ -9,7 +9,7 @@
 
 import "server-only";
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 /**
  * 加密密码

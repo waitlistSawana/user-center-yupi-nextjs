@@ -5,12 +5,10 @@ import { getCurrentUserBySession } from "@/server/utils/session";
 import { TRPCError } from "@trpc/server";
 import { NextResponse, type NextRequest } from "next/server";
 
-export const runtime = "edge";
-
-export interface UserCurrentGetResponse {
+export interface UserCurrentGetSuccessResponse {
   code: 0;
   message: string;
-  user: SafeUser | null;
+  user: SafeUser
 }
 
 /**
@@ -63,9 +61,18 @@ export async function GET(): Promise<NextResponse> {
     );
   }
 
+  if (!user) {
+    return TRPCErrorToNextResponse(
+      new TRPCError({
+        code: "NOT_FOUND",
+        message: "user not found",
+      }),
+    );
+  }
+
   return NextResponse.json({
     code: code,
     message: message,
     user: user,
-  } as UserCurrentGetResponse);
+  } as UserCurrentGetSuccessResponse);
 }

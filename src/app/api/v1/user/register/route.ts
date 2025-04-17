@@ -1,9 +1,8 @@
 import { userRegister } from "@/server/services/user";
 import { TRPCErrorToNextResponse } from "@/server/utils/error-handling";
+import { createSession } from "@/server/utils/session";
 import { TRPCError } from "@trpc/server";
 import { NextResponse, type NextRequest } from "next/server";
-
-export const runtime = "edge";
 
 export interface UserRegisterPostRequestBody {
   userAccount: string;
@@ -78,7 +77,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // TODO: set cookie
+    await createSession(userAccount);
 
     return NextResponse.json({ userId: userId, userAccount: userAccount });
   } catch (error) {

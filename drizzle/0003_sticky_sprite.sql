@@ -1,0 +1,1 @@
+ALTER TABLE `user-center-yupi-nextjs_post` MODIFY COLUMN `updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;

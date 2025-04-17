@@ -23,7 +23,10 @@ export const posts = createTable(
       .timestamp()
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: d.timestamp().onUpdateNow(),
+    updatedAt: d
+      .timestamp()
+      .default(sql`CURRENT_TIMESTAMP`)
+      .onUpdateNow(),
   }),
   (t) => [index("name_idx").on(t.name)],
 );
